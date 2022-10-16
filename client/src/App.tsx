@@ -1,21 +1,27 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./App.css";
 import LoginForm from "./components/LoginForm";
 import { ContextStore } from "./index";
 import { IUser } from "./models/IUser";
 import UserService from "./services/UserService";
+import { LocalStorageKeys } from "./enums/storages";
 
 function App() {
   const { store } = useContext(ContextStore);
-  console.log("isAuth", store.isAuth);
-  console.log("isLoading", store.isLoading);
   const [users, setUsers] = useState<IUser[]>([]);
+  console.log("App");
 
+  const firstRender = useRef(true);
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      store.checkAuth();
+    if (firstRender.current) {
+      if (localStorage.getItem(LocalStorageKeys.accessToken)) {
+        store.checkAuth();
+      }
     }
+    return () => {
+      firstRender.current = false;
+    };
   }, [store]);
 
   async function getUsers() {
@@ -51,9 +57,9 @@ function App() {
       <div>
         <button onClick={() => getUsers()}>Получить пользователей</button>
       </div>
-      {users.map(user => <div key={user.email}>{user.email}</div>)
-
-      }
+      {users.map((user) => (
+        <div key={user.email}>{user.email}</div>
+      ))}
     </div>
   );
 }

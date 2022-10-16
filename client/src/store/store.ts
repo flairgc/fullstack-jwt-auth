@@ -1,9 +1,8 @@
-import axios from "axios";
 import { makeAutoObservable } from "mobx";
 import { IUser } from "../models/IUser";
 import AuthService from "../services/AuthService";
-import { AuthResponse } from "../models/response/AuthResponse";
-import {API_URL} from "../http";
+import { getRefreshedTokens } from "../http";
+import { LocalStorageKeys } from "../enums/storages";
 
 export default class Store {
   user = {} as IUser;
@@ -30,7 +29,7 @@ export default class Store {
     try {
       const response = await AuthService.login(email, password);
       console.log('login', response);
-      localStorage.setItem('token', response.data.accessToken);
+      localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (e: any) {
@@ -42,7 +41,7 @@ export default class Store {
     try {
       const response = await AuthService.registration(email, password);
       console.log('registration', response);
-      localStorage.setItem('token', response.data.accessToken);
+      localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (e: any) {
@@ -54,7 +53,7 @@ export default class Store {
     try {
       const response = await AuthService.logout();
       console.log('logout', response);
-      localStorage.removeItem('token');
+      localStorage.removeItem(LocalStorageKeys.accessToken);
       this.setAuth(false);
       this.setUser({} as IUser);
     } catch (e: any) {
@@ -65,9 +64,9 @@ export default class Store {
   async checkAuth() {
     this.setLoading(true);
     try {
-      const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true});
+      const response = await getRefreshedTokens();
       console.log('checkAuth', response);
-      localStorage.setItem('token', response.data.accessToken);
+      localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (e: any) {
