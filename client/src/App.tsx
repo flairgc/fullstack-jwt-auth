@@ -1,22 +1,21 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState  } from "react";
 import "./App.css";
 import LoginForm from "./components/LoginForm";
 import { ContextStore } from "./index";
 import { IUser } from "./models/IUser";
 import UserService from "./services/UserService";
 import { LocalStorageKeys } from "./enums/storages";
+import UserList from "./components/UserList";
 
 function App() {
   const { store } = useContext(ContextStore);
-  const [users, setUsers] = useState<IUser[]>([]);
-  console.log("App");
 
   const firstRender = useRef(true);
   useEffect(() => {
     if (firstRender.current) {
       if (localStorage.getItem(LocalStorageKeys.accessToken)) {
-        store.checkAuth();
+        store.checkAuth().then();
       }
     }
     return () => {
@@ -24,14 +23,15 @@ function App() {
     };
   }, [store]);
 
-  async function getUsers() {
-    try {
-      const response = await UserService.fetchUsers();
-      setUsers(response.data);
-    } catch (e) {
-      console.log("getUsers", e);
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      // код
     }
-  }
+    return () => {
+      firstRender.current = false;
+    };
+  }, []);
 
   if (store.isLoading) {
     return <div>Загрузка</div>;
@@ -54,12 +54,7 @@ function App() {
           : "Пользователь не активирован!"}
       </h2>
       <button onClick={() => store.logout()}>Выйти</button>
-      <div>
-        <button onClick={() => getUsers()}>Получить пользователей</button>
-      </div>
-      {users.map((user) => (
-        <div key={user.email}>{user.email}</div>
-      ))}
+      <UserList />
     </div>
   );
 }

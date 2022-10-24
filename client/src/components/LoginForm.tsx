@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import {observer} from "mobx-react-lite";
 import { ContextStore } from "../index";
 
@@ -9,11 +9,14 @@ const LoginForm: FC = () => {
   const { store } = useContext(ContextStore);
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
+      <div>flair.gc@yandex.ru</div>
       <input
         onChange={(e) => setEmail(e.target.value)}
         type="email"
         placeholder="Email"
+        name={email}
+        autoComplete="on"
       />
       <input
         onChange={(e) => setPassword(e.target.value)}
