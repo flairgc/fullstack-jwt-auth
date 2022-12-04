@@ -28,36 +28,33 @@ export default class Store {
   async login(email: string, password: string) {
     try {
       const response = await AuthService.login(email, password);
-      console.log('login', response);
       localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (e: any) {
-      console.log(e.response?.data?.message );
+      console.error(e.response?.data?.message );
     }
   };
 
   async registration(email: string, password: string) {
     try {
       const response = await AuthService.registration(email, password);
-      console.log('registration', response);
       localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (e: any) {
-      console.log(e.response?.data?.message );
+      console.error(e.response?.data?.message );
     }
   };
 
   async logout() {
     try {
-      const response = await AuthService.logout();
-      console.log('logout', response);
+      await AuthService.logout();
       localStorage.removeItem(LocalStorageKeys.accessToken);
       this.setAuth(false);
       this.setUser({} as IUser);
     } catch (e: any) {
-      console.log(e.response?.data?.message );
+      console.error(e.response?.data?.message );
     }
   };
 
@@ -65,12 +62,11 @@ export default class Store {
     this.setLoading(true);
     try {
       const response = await getRefreshedTokens();
-      console.log('checkAuth', response);
       localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (e: any) {
-      console.log(e.response?.data?.message);
+      console.error(e.response?.data?.message);
     } finally {
       this.setLoading(false);
     }

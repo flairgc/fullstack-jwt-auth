@@ -1,5 +1,4 @@
 import React, { FC, useState } from "react";
-import { observer } from "mobx-react-lite";
 import { IUser } from "../models/IUser";
 import UserService from "../services/UserService";
 
@@ -12,7 +11,9 @@ const UserList: FC = () => {
       const response = await UserService.fetchUsers();
       setUsers(response.data);
     } catch (e) {
-      console.log("getUsers", e);
+      console.error("getUsers", e);
+    } finally {
+      setLoading(true);
     }
   }
 

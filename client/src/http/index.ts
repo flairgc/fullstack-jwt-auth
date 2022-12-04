@@ -40,7 +40,7 @@ $api.interceptors.response.use(
         localStorage.setItem(LocalStorageKeys.accessToken, response.data.accessToken);
         return $api.request(originalRequest);
       } catch (e) {
-        console.log("Не авторизован");
+        console.error("Не авторизован");
       }
     }
     throw error;
