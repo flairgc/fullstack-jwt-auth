@@ -8,12 +8,13 @@ const UserList: FC = () => {
 
   async function getUsers() {
     try {
+      setLoading(true);
       const response = await UserService.fetchUsers();
       setUsers(response.data);
     } catch (e) {
       console.error("getUsers", e);
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   }
 
